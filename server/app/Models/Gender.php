@@ -15,10 +15,11 @@ class Gender extends Model
     protected $primaryKey = 'gender_id';
     protected $fillable = [
         'gender',
+        'is_deleted',
     ];
 
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, 'gender_id', 'gender_id',);
+        return $this->hasMany(User::class, 'gender_id', 'gender_id');
     }
 }
