@@ -2,18 +2,20 @@ import AxiosInstance from "../AxiosInstance";
 
 const GenderService = {
   loadGenders: async () => {
-    return AxiosInstance.get("/loadGenders")
-      .then((response) => response)
-      .catch((error) => {
-        throw error;
-      });
+    try {
+      const response = await AxiosInstance.get("/loadGenders");
+      return response;
+    } catch (error) {
+      throw error;
+    }
   },
   getGender: async (genderId: number) => {
-    return AxiosInstance.get(`/getGender/${genderId}`)
-      .then((response) => response)
-      .catch((error) => {
-        throw error;
-      });
+    try {
+      const response = await AxiosInstance.get(`/getGender/${genderId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   },
   storeGender: async (data: any) => {
     return AxiosInstance.post("/storeGender", data)

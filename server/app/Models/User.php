@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
+
+
+
 
 class User extends Authenticatable
 {
@@ -38,3 +42,9 @@ class User extends Authenticatable
         return $this->belongsTo(Gender::class, 'gender_id', 'gender_id');
     }
 }
+
+User::create([
+    'email' => 'test@example.com',
+    $user->password = Hash::make('password123')
+
+]);

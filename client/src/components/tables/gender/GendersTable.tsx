@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import {Genders} from "../../../interfaces/Genders";
+import { Genders } from "../../../interfaces/Genders";
 import GenderService from "../../../services/GenderService";
-import ErrorHandler from "../../../handler/ErrorHandler";
 import Spinner from "../../Spinner";
 import { Link } from "react-router-dom";
 
@@ -15,30 +14,32 @@ const GendersTable = ({ refreshGenders }: GendersTableProps) => {
     genders: [] as Genders[],
   });
 
-  const handleLoadGenders = () => {
-    GenderService.loadGenders()
-      .then((res) => {
-        if (res.status === 200) {
-          setState((prevState) => ({
-            ...prevState,
-            genders: res.data.genders,
-          }));
-        } else {
-          console.error(
-            "Unexpected status error during loading genders: ",
-            res.status
-          );
-        }
-      })
-      .catch((error) => {
-        ErrorHandler(error, null);
-      })
-      .finally(() => {
+  const handleLoadGenders = async () => {
+    try {
+      const res = await GenderService.loadGenders();
+
+      if (res.status === 200) {
         setState((prevState) => ({
           ...prevState,
-          loadingGenders: false,
+          genders: res.data.genders,
         }));
-      });
+      } else {
+        console.error(
+          "Unexpected status error occured during load genders: ",
+          res.status
+        );
+      }
+    } catch (error: any) {
+      console.error(
+        "Unexpected server error occured during load genders: ",
+        error
+      );
+    } finally {
+      setState((prevState) => ({
+        ...prevState,
+        loadingGenders: false,
+      }));
+    }
   };
 
   useEffect(() => {

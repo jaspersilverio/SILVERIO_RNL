@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { FormEvent, useState } from "react";
+import ErrorHandler from "../handler/ErrorHandler";
+import SpinnerSmall from "./SpinnerSmall";
 
 const Navbar = () => {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const [loadingLogout, setLoadingLogout] = useState(false);
+
   const menuItems = [
     {
       route: "/",
@@ -11,6 +20,44 @@ const Navbar = () => {
       title: "Users",
     },
   ];
+
+  const handleLogout = (e: FormEvent) => {
+    e.preventDefault();
+
+    setLoadingLogout(true);
+
+    logout()
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        ErrorHandler(error, null);
+      })
+      .finally(() => {
+        setLoadingLogout(false);
+      });
+  };
+
+  const handleUserFullName = () => {
+  const user = localStorage.getItem("user");
+
+  if (!user) return "Guest"; // or return null / empty string
+
+  try {
+    const parsedUser = JSON.parse(user);
+
+    const first = parsedUser?.first_name ?? "";
+    const middle = parsedUser?.middle_name ?? "";
+    const last = parsedUser?.last_name ?? "";
+
+    const middleInitial = middle ? ` ${middle[0]}.` : "";
+
+    return `${last}, ${first}${middleInitial}`;
+  } catch (err) {
+    console.error("Failed to parse user from localStorage", err);
+    return "Guest";
+  }
+};
 
   return (
     <>
@@ -40,7 +87,22 @@ const Navbar = () => {
                 </li>
               ))}
             </ul>
+            {handleUserFullName()}
           </div>
+          <button
+            type="submit"
+            className="btn btn-danger"
+            onClick={handleLogout}
+            disabled={loadingLogout}
+          >
+            {loadingLogout ? (
+              <>
+                <SpinnerSmall /> Logging Out...
+              </>
+            ) : (
+              "Logout"
+            )}
+          </button>
         </div>
       </nav>
     </>
